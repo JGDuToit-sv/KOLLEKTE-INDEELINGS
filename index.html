@@ -334,6 +334,15 @@ input:focus,textarea:focus,select:focus {
         </div>
         <div class="nsec-body" id="offerBody"><div class="es">Niemand gekies</div></div>
       </div>
+     
+      <!-- OORSIEN -->
+      <div class="nsec" style="margin-top:10px">
+        <div class="nsec-hdr">
+          <span style="font-weight:700;font-size:13px">&#128065; Oorsien</span>
+          <button class="btn bg bsm" id="btnAssignOorsien">+ Kies</button>
+        </div>
+        <div class="nsec-body" id="oorsienBody"><div class="es">Niemand gekies</div></div>
+      </div>
     </div>
 
     <div id="bothView" style="display:none">
@@ -663,14 +672,16 @@ function renderNotes(svc){
 }
 
 function renderTasks(){
-  if(curSvc==="BOTH") return; // tasks shown per service only
-  var d = loadSvc(curSvc);
-  var pastoor = d.pastoor || [];
-  var offer   = d.offer   || [];
+  if(curSvc==="BOTH") return;
+  var d       = loadSvc(curSvc);
+  var pastoor = d.pastoor  || [];
+  var offer   = d.offer    || [];
+  var oorsien = d.oorsien  || [];
 
   var pb = el("pastoorBody");
   var ob = el("offerBody");
-  if(!pb || !ob) return;
+  var oo = el("oorsienBody");
+  if(!pb || !ob || !oo) return;
 
   pb.innerHTML = pastoor.length
     ? pastoor.map(function(nm){
@@ -683,6 +694,13 @@ function renderTasks(){
     ? offer.map(function(nm){
         return '<span class="chip chip-C">'+esc(nm)
           +'<button class="chip-x task-chip-x" data-field="offer" data-nm="'+esc(nm)+'">&#xd7;</button></span>';
+      }).join("")
+    : '<div class="es">Niemand gekies</div>';
+
+  oo.innerHTML = oorsien.length
+    ? oorsien.map(function(nm){
+        return '<span class="chip chip-A">'+esc(nm)
+          +'<button class="chip-x task-chip-x" data-field="oorsien" data-nm="'+esc(nm)+'">&#xd7;</button></span>';
       }).join("")
     : '<div class="es">Niemand gekies</div>';
 }
@@ -956,7 +974,7 @@ el("btnExport").addEventListener("click", function(){
   p.push(".namecols{width:60%;margin:8px auto 12px auto;display:flex;gap:4px}");
   p.push(".namecol{flex:1}");
   p.push(".groeplbl{font-size:12px;font-weight:900;margin-bottom:4px}");
-  p.push(".lbl-A{color:#667eea}.lbl-B{color:#a78bfa}.lbl-C{color:#f093fb}");
+  p.push(".lbl-A{color:#f5c518}.lbl-B{color:#4169e1}.lbl-C{color:#cc0000}");
   p.push(".namerow{font-size:13px;line-height:1.7;color:#eef0ff}");
   p.push(".noname{font-size:11px;color:#555;font-style:italic}");
   p.push(".section{padding-top:9px;border-top:1px solid #2a2d4a;margin-top:6px}");
@@ -1011,6 +1029,13 @@ el("btnExport").addEventListener("click", function(){
       p.push("</div>");
     }
 
+    var oorsien = d.oorsien || [];
+    if(oorsien.length){
+      p.push("<div class='section'><div class='seclbl' style='color:#667eea'>&#128065; Oorsien</div>");
+      oorsien.forEach(function(nm){ p.push("<div class='secrow'>" + esc(nm) + "</div>"); });
+      p.push("</div>");
+    }
+    
     p.push("</div>");
   });
 
@@ -1074,6 +1099,7 @@ el("taskPickList").addEventListener("click", function(e){
 
 el("btnAssignPastoor").addEventListener("click", function(){ openTaskModal("pastoor"); });
 el("btnAssignOffer").addEventListener("click",   function(){ openTaskModal("offer");   });
+el("btnAssignOorsien").addEventListener("click", function(){ openTaskModal("oorsien"); });
 el("btnCloseTask").addEventListener("click",  function(){ closeOv("ovTask"); });
 
 el("btnTaskClear").addEventListener("click", function(){
